@@ -1,11 +1,11 @@
-#! /bin/env node --harmony
+#! /usr/bin/env node --harmony
 
 'use strict';
 
 // Dependencies
 var program = require('commander');
 var pkg     = require('../package');
-var Tasks   = require('tasks-models');
+var Tasks   = require('tasks-model');
 var tasks   = new Tasks();
 
 program
