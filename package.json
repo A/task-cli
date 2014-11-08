@@ -1,0 +1,22 @@
+{
+  "name": "tasks-cli",
+  "version": "0.0.0",
+  "description": "CLI for https://github.com/shuvalov-anton/tasks",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --harmony"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shuvalov-anton/tasks-cli.git"
+  },
+  "author": "",
+  "license": "MMIT",
+  "bugs": {
+    "url": "https://github.com/shuvalov-anton/tasks-cli/issues"
+  },
+  "homepage": "https://github.com/shuvalov-anton/tasks-cli",
+  "dependencies": {
+    "commander": "^2.5.0"
+  }
+}

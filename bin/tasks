@@ -1,0 +1,55 @@
+#! /bin/env node --harmony
+
+'use strict';
+
+// Dependencies
+var program = require('commander');
+var pkg     = require('../package');
+var Tasks   = require('tasks-models');
+var tasks   = new Tasks();
+
+program
+  .version(pkg.version)
+  .option('-a, --add <name:name>, [task-option:value]', 'add new task and prompt description', add)
+  .options('-u, --update <id> [task-option:value]', 'prompt update name and description', update)
+  .options('-d, --delete <id>', 'delete task by id', remove)
+  .options('-g, --get <id or tag>', 'find tasks by ID or TAG', get)
+  .options('-f, --find <key>', 'find tasks by keywords', find)
+  .options('-n, --next', 'show next tasks', next)
+  .parse(process.argv)
+;
+
+// if no options selected
+program.agrs.length
+  ? next()
+  : add();
+
+// update task by id
+function add () {
+  console.log('add');
+}
+
+// update task by id
+function update () {
+  console.log('update');
+}
+
+// delete task by id
+function remove () {
+  console.log('remove');
+}
+
+// get tasks by id or key
+function get () {
+  console.log('get');
+}
+
+// find task by keywords
+function find () {
+  console.log('find');
+}
+
+// list of the next tasks
+function next () {
+  console.log('next');
+}
