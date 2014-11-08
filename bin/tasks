@@ -11,45 +11,52 @@ var tasks   = new Tasks();
 program
   .version(pkg.version)
   .option('-a, --add <name:name>, [task-option:value]', 'add new task and prompt description', add)
-  .options('-u, --update <id> [task-option:value]', 'prompt update name and description', update)
-  .options('-d, --delete <id>', 'delete task by id', remove)
-  .options('-g, --get <id or tag>', 'find tasks by ID or TAG', get)
-  .options('-f, --find <key>', 'find tasks by keywords', find)
-  .options('-n, --next', 'show next tasks', next)
+  .option('-u, --update <id> [task-option:value]', 'prompt update name and description', update)
+  .option('-d, --delete <id>', 'delete task by id', remove)
+  .option('-g, --get <id or tag>', 'find tasks by ID or TAG', get)
+  .option('-f, --find <key>', 'find tasks by keywords', find)
+  .option('-n, --next', 'show next tasks', next)
   .parse(process.argv)
 ;
 
 // if no options selected
-program.agrs.length
+program.args.length
   ? next()
-  : add();
+  : add()
+, process.exit(0);
 
 // update task by id
 function add () {
   console.log('add');
+  process.exit(0);
 }
 
 // update task by id
 function update () {
   console.log('update');
+  process.exit(0);
 }
 
 // delete task by id
 function remove () {
   console.log('remove');
+  process.exit(0);
 }
 
 // get tasks by id or key
 function get () {
   console.log('get');
+  process.exit(0);
 }
 
 // find task by keywords
 function find () {
   console.log('find');
+  process.exit(0);
 }
 
 // list of the next tasks
 function next () {
   console.log('next');
+  process.exit(0);
 }
