@@ -13,26 +13,62 @@ var tasks   = new Tasks();
 
 program
   .version(pkg.version)
-  .option('-a, --add <name:name>, [task-option:value]', 'add new task and prompt description', co(add))
-  .option('-u, --update <id> [task-option:value]', 'prompt update name and description', co(update))
-  .option('-d, --delete <id>', 'delete task by id', remove)
-  .option('-g, --get <id or tag>', 'find tasks by ID or TAG', get)
-  .option('-f, --find <key>', 'find tasks by keywords', find)
-  .option('-n, --next', 'show next tasks', next)
-  .parse(process.argv)
 ;
 
+program
+  .command('add [options...]')
+  .description('add new task')
+  .action(co(add))
+;
 
-// // if no options selected
-// program.args.length
-//   ? add()
-//   : next()
-// , process.exit(0);
+program
+  .command('update <id> [options...]')
+  .description('update task by id')
+  .action(co(update))
+;
+
+program
+  .command('get [id|tag]')
+  .description('get tasks by id or tag')
+  .option('-c, --count', 'show only count')
+  .action(co(get))
+;
+
+// program
+//   .command('* <id> [options...]')
+//   .action(co(function * (id, options) {
+//     console.log(id, options);
+//     yield program.args.length
+//       ? co(add())
+//       : co(next())
+//     , process.exit(0);
+//   }))
+// ;
+
+program.parse(process.argv);
+
+  // .command('add [options...]', 'add new task', co(add))
+  // .option('-u, --update <id> [task-option:value]', 'prompt update name and description', co(update))
+  // .option('-d, --delete <id>', 'delete task by id', remove)
+  // .option('-g, --get <id or tag>', 'find tasks by ID or TAG', get)
+  // .option('-f, --find <key>', 'find tasks by keywords', find)
+  // .option('-n, --next', 'show next tasks', next)
+  // // .action(co(action))
+  // .parse(process.argv)
+// ;
+
+
+// if no options selected
+// function * action () {
+//   yield program.args.length
+//     ? add()
+//     : next()
+//   , process.exit(0);
+// }
 
 // update task by id
-function * add () {
-  var query = process.argv.slice(2).join(' ');
-  var data = parse(query);
+function * add (options) {
+  var data = parse(options.join(' '));
   data.tags = data.tags
     ? sliceTags(data.tags)
     : ['inbox'];
@@ -60,8 +96,15 @@ function remove () {
 }
 
 // get tasks by id or key
-function get () {
-  console.log('get');
+function * get (id, options) {
+  if (id) {
+    id = trimHash(id);
+    id = id == parseInt(id) ? parseInt(id) : id; // TODO: stupid
+  }
+  var list = [].concat(yield tasks.get(id)); // always is array! :D
+  options.count
+    ? console.log(list.length)
+    : print(list);
   process.exit(0);
 }
 
@@ -80,6 +123,7 @@ function next () {
 // print task
 // TODO: make it super awesome
 function print (task) {
+  if (Array.isArray(task)) { return task.map(print); }
   console.log();
   var str = ['#'+task._id.toString().blue, task.name.black].join(' ');
   console.log(str);
