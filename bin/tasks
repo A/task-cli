@@ -33,6 +33,11 @@ program
 function * add () {
   var query = process.argv.slice(2).join(' ');
   var data = parse(query);
+  data.tags = data.tags
+    ? data.tags.split(',').map(function (tag) {
+        return tag.trim();
+      })
+    : ['inbox'];
   var task = yield tasks.add(data);
   print(task[0]);
   process.exit(0);
@@ -73,5 +78,8 @@ function next () {
 function print (task) {
   var str = ['#'+task._id.toString().blue, task.name.black].join(' ');
   console.log(str);
+  task.tags && console.log('tags: ', task.tags.reduce(function(m, tag) {
+    return m.push('#' + tag.red), m;
+  }, []).join(', '));
   task.description && console.log(task.description);
 }
