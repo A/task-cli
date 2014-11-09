@@ -3,14 +3,17 @@
 'use strict';
 
 // Dependencies
+var co      = require('co');
 var program = require('commander');
+var colors  = require('colors');
 var pkg     = require('../package');
 var Tasks   = require('tasks-model');
+var parse   = require('../lib/parser');
 var tasks   = new Tasks();
 
 program
   .version(pkg.version)
-  .option('-a, --add <name:name>, [task-option:value]', 'add new task and prompt description', add)
+  .option('-a, --add <name:name>, [task-option:value]', 'add new task and prompt description', co(add))
   .option('-u, --update <id> [task-option:value]', 'prompt update name and description', update)
   .option('-d, --delete <id>', 'delete task by id', remove)
   .option('-g, --get <id or tag>', 'find tasks by ID or TAG', get)
@@ -19,15 +22,19 @@ program
   .parse(process.argv)
 ;
 
-// if no options selected
-program.args.length
-  ? add()
-  : next()
-, process.exit(0);
+
+// // if no options selected
+// program.args.length
+//   ? add()
+//   : next()
+// , process.exit(0);
 
 // update task by id
-function add () {
-  console.log('add');
+function * add () {
+  var query = process.argv.slice(2).join(' ');
+  var data = parse(query);
+  var task = yield tasks.add(data);
+  print(task[0]);
   process.exit(0);
 }
 
@@ -59,4 +66,12 @@ function find () {
 function next () {
   console.log('next');
   process.exit(0);
+}
+
+// print task
+// TODO: make it super awesome
+function print (task) {
+  var str = ['#'+task._id.toString().blue, task.name.black].join(' ');
+  console.log(str);
+  task.description && console.log(task.description);
 }
