@@ -14,7 +14,7 @@ var tasks   = new Tasks();
 program
   .version(pkg.version)
   .option('-a, --add <name:name>, [task-option:value]', 'add new task and prompt description', co(add))
-  .option('-u, --update <id> [task-option:value]', 'prompt update name and description', update)
+  .option('-u, --update <id> [task-option:value]', 'prompt update name and description', co(update))
   .option('-d, --delete <id>', 'delete task by id', remove)
   .option('-g, --get <id or tag>', 'find tasks by ID or TAG', get)
   .option('-f, --find <key>', 'find tasks by keywords', find)
@@ -34,9 +34,7 @@ function * add () {
   var query = process.argv.slice(2).join(' ');
   var data = parse(query);
   data.tags = data.tags
-    ? data.tags.split(',').map(function (tag) {
-        return tag.trim();
-      })
+    ? sliceTags(data.tags)
     : ['inbox'];
   var task = yield tasks.add(data);
   print(task[0]);
@@ -44,8 +42,14 @@ function * add () {
 }
 
 // update task by id
-function update () {
-  console.log('update');
+function * update (id) {
+  id = parseInt(trimHash(id));
+  var query = process.argv.slice(2).join(' ');
+  var data = parse(query);
+  data.tags && (data.tags = sliceTags(data.tags));
+  yield tasks.update(parseInt(id), data);
+  var task = yield tasks.get(id);
+  print(task);
   process.exit(0);
 }
 
@@ -82,4 +86,14 @@ function print (task) {
     return m.push('#' + tag.red), m;
   }, []).join(', '));
   task.description && console.log(task.description);
+}
+
+function sliceTags (tags) {
+  return tags.split(',').map(function (tag) {
+    return tag.trim(); 
+  });
+}
+
+function trimHash(str) {
+  return str.replace(/^#/, '');
 }
