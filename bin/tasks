@@ -3,13 +3,15 @@
 'use strict';
 
 // Dependencies
-var co      = require('co');
-var program = require('commander');
-var colors  = require('colors');
-var pkg     = require('../package');
-var Tasks   = require('tasks-model');
-var parse   = require('../lib/parser');
-var tasks   = new Tasks();
+var co            = require('co');
+var colors        = require('colors');
+var date          = require('date.js');
+var moment        = require('moment-twitter');
+var parse         = require('../lib/parser');
+var pkg           = require('../package');
+var program       = require('commander');
+var Tasks         = require('tasks-model');
+var tasks         = new Tasks();
 
 program
   .version(pkg.version)
@@ -35,62 +37,40 @@ program
 ;
 
 program
+  .command('next [tag]')
+  .description('show next tasks if no opts')
+  .action(co(next))
+;
+
+program
   .command('done <id...>')
   .description('mark task as finished')
   .action(co(done))
 ;
 
-// program
-//   .command('* <id> [options...]')
-//   .action(co(function * (id, options) {
-//     console.log(id, options);
-//     yield program.args.length
-//       ? co(add())
-//       : co(next())
-//     , process.exit(0);
-//   }))
-// ;
-
 program.parse(process.argv);
 
-  // .command('add [options...]', 'add new task', co(add))
-  // .option('-u, --update <id> [task-option:value]', 'prompt update name and description', co(update))
-  // .option('-d, --delete <id>', 'delete task by id', remove)
-  // .option('-g, --get <id or tag>', 'find tasks by ID or TAG', get)
-  // .option('-f, --find <key>', 'find tasks by keywords', find)
-  // .option('-n, --next', 'show next tasks', next)
-  // // .action(co(action))
-  // .parse(process.argv)
-// ;
 
-
-// if no options selected
-// function * action () {
-//   yield program.args.length
-//     ? add()
-//     : next()
-//   , process.exit(0);
-// }
-
-// update task by id
+// add task
 function * add (options) {
-  var data = parse(options.join(' '));
-  data.tags = data.tags
-    ? sliceTags(data.tags)
+  var task = parse(options.join(' '));
+  task.tags = task.tags
+    ? sliceTags(task.tags)
     : ['inbox'];
-  var task = yield tasks.add(data);
+  parseDate(task);
+  task = yield tasks.add(task);
   print(task[0]);
   process.exit(0);
 }
 
 // update task by id
-function * update (id) {
-  id = parseInt(trimHash(id));
-  var query = process.argv.slice(2).join(' ');
-  var data = parse(query);
-  data.tags && (data.tags = sliceTags(data.tags));
-  yield tasks.update(parseInt(id), data);
-  var task = yield tasks.get(id);
+function * update (options) {
+  var id = parseInt(trimHash(options.shift()));
+  var task = parse(options.join(' '));
+  task.tags && (task.tags = sliceTags(task.tags));
+  parseDate(task);
+  yield tasks.update(id, task);
+  task = yield tasks.get(id);
   print(task);
   process.exit(0);
 }
@@ -135,8 +115,9 @@ function find () {
 }
 
 // list of the next tasks
-function next () {
-  console.log('next');
+function * next (tag) {
+  var list = yield tasks.next(tag);
+  print(list);
   process.exit(0);
 }
 
@@ -151,6 +132,13 @@ function print (task) {
   task.tags && console.log('tags: ', task.tags.reduce(function(m, tag) {
     return m.push('#' + tag.red), m;
   }, []).join(', '));
+  task.start && console.log('start: ' + moment(task.start).twitter());
+  task.estimate && console.log('estimate: ' + moment(task.estimate).twitter());
+  if (task.due) {
+    +new Date(task.due) > +new Date()
+      ? console.log('due: ' + moment(task.due).twitter())
+      : console.log('due: ' + moment(task.due).twitter().red);
+  }
   console.log();
 }
 
@@ -162,4 +150,11 @@ function sliceTags (tags) {
 
 function trimHash(str) {
   return str.replace(/^#/, '');
+}
+
+// parse human friendly data and update task object
+function parseDate(task) {
+  task.estimate && (task.estimate = date(task.estimate));
+  task.due && (task.due = date(task.due));
+  task.start && (task.start = date(task.start));
 }
