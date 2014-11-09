@@ -48,6 +48,12 @@ program
   .action(co(done))
 ;
 
+program
+  .command('remove <id...>')
+  .description('remove task')
+  .action(co(remove))
+;
+
 program.parse(process.argv);
 
 
@@ -76,8 +82,16 @@ function * update (options) {
 }
 
 // delete task by id
-function remove () {
-  console.log('remove');
+function * remove (ids) {
+  ids = [].concat(ids);
+  var thunks = ids.map(function(id) {
+    id = parseInt(trimHash(id));
+    return function * () {
+      console.log('remove #' + id.toString().black);
+      yield tasks.remove(id);
+    };
+  });
+  yield thunks;
   process.exit(0);
 }
 
@@ -122,7 +136,6 @@ function * next (tag) {
 }
 
 // print task
-// TODO: make it super awesome
 function print (task) {
   if (Array.isArray(task)) { return task.map(print); }
   console.log();

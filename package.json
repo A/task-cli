@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "description": "CLI for https://github.com/shuvalov-anton/tasks",
   "main": "index.js",
+  "bin": {
+    "tasks": "./bin/tasks"
+  },
   "scripts": {
     "test": "mocha --harmony"
   },
