@@ -80,12 +80,14 @@ function next () {
 // print task
 // TODO: make it super awesome
 function print (task) {
+  console.log();
   var str = ['#'+task._id.toString().blue, task.name.black].join(' ');
   console.log(str);
+  task.description && console.log(task.description);
   task.tags && console.log('tags: ', task.tags.reduce(function(m, tag) {
     return m.push('#' + tag.red), m;
   }, []).join(', '));
-  task.description && console.log(task.description);
+  console.log();
 }
 
 function sliceTags (tags) {
