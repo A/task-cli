@@ -21,8 +21,8 @@ program
 
 // if no options selected
 program.args.length
-  ? next()
-  : add()
+  ? add()
+  : next()
 , process.exit(0);
 
 // update task by id
