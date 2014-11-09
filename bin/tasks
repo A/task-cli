@@ -34,6 +34,12 @@ program
   .action(co(get))
 ;
 
+program
+  .command('done <id...>')
+  .description('mark task as finished')
+  .action(co(done))
+;
+
 // program
 //   .command('* <id> [options...]')
 //   .action(co(function * (id, options) {
@@ -105,6 +111,20 @@ function * get (id, options) {
   options.count
     ? console.log(list.length)
     : print(list);
+  process.exit(0);
+}
+
+// mark task al finished
+function * done (ids) {
+  ids = [].concat(ids);
+  var thunks = ids.map(function(id) {
+    id = parseInt(trimHash(id));
+    return function * () {
+      console.log('done #' + id.toString().blue);
+      yield tasks.done(id);
+    };
+  });
+  yield thunks;
   process.exit(0);
 }
 
