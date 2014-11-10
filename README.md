@@ -3,4 +3,4 @@ tasks-cli
 
 CLI for https://github.com/shuvalov-anton/tasks
 
-![screenshot](https://cloud.githubusercontent.com/assets/1410106/4966221/bd8b42e0-67b4-11e4-9a36-0ac5666cbe72.png)
+![screenshot](https://cloud.githubusercontent.com/assets/1410106/4970081/312c2714-6878-11e4-95a3-c6f3ab5e0eca.png)
