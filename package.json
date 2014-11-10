@@ -1,5 +1,5 @@
 {
-  "name": "tasks-cli",
+  "name": "task-cli",
   "version": "1.0.0",
   "description": "CLI for https://github.com/shuvalov-anton/tasks",
   "main": "index.js",
