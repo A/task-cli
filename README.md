@@ -15,9 +15,12 @@ Simple CLI task manager based on [taskninja/task-model][1].
 
 ## Intarface
 
-#### `-v` and `--verbosed`
+#### Global Flags
 
-Show you verbosed logs for some operations.
+- `-v, --verbosed`  
+  Show you verbosed logs for some operations.
+- `-c, --count`
+  Show count of the tasks instead task descriptions.
 
 #### tasks add
 
