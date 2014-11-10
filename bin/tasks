@@ -13,8 +13,12 @@ var program       = require('commander');
 var Tasks         = require('tasks-model');
 var tasks         = new Tasks();
 
+
+// cli
+
 program
   .version(pkg.version)
+  .option('-v, --verbose', 'verbose logs')
 ;
 
 program
@@ -57,6 +61,9 @@ program
 program.parse(process.argv);
 
 
+// Methods
+// TODO: move to lib
+
 // add task
 function * add (options) {
   var task = parse(options.join(' '));
@@ -65,29 +72,32 @@ function * add (options) {
     : ['inbox'];
   parseDate(task);
   task = yield tasks.add(task);
-  print(task[0]);
+  program.verbose
+    ? print(task)
+    : console.log('created #' + task.uid.toString().blue);
   process.exit(0);
 }
 
 // update task by id
 function * update (options) {
-  var id = parseInt(trimHash(options.shift()));
+  var id = trim(options[0]);
   var task = parse(options.join(' '));
-  task.tags && (task.tags = sliceTags(task.tags));
+  if (task.tags) { (task.tags = sliceTags(task.tags)); }
   parseDate(task);
   yield tasks.update(id, task);
   task = yield tasks.get(id);
-  print(task);
+  program.verbose
+    ? print(task)
+    : console.log('updated #' + task.uid.toString().blue);
   process.exit(0);
 }
 
 // delete task by id
 function * remove (ids) {
-  ids = [].concat(ids);
   var thunks = ids.map(function(id) {
-    id = parseInt(trimHash(id));
+    id = trim(id);
     return function * () {
-      console.log('remove #' + id.toString().black);
+      console.log('removed #' + id.black);
       yield tasks.remove(id);
     };
   });
@@ -97,10 +107,7 @@ function * remove (ids) {
 
 // get tasks by id or key
 function * get (id, options) {
-  if (id) {
-    id = trimHash(id);
-    id = id == parseInt(id) ? parseInt(id) : id; // TODO: stupid
-  }
+  if (id) { id = trim(id); }
   var list = [].concat(yield tasks.get(id)); // always is array! :D
   options.count
     ? console.log(list.length)
@@ -110,9 +117,8 @@ function * get (id, options) {
 
 // mark task al finished
 function * done (ids) {
-  ids = [].concat(ids);
   var thunks = ids.map(function(id) {
-    id = parseInt(trimHash(id));
+    id = trim(id);
     return function * () {
       console.log('done #' + id.toString().blue);
       yield tasks.done(id);
@@ -139,7 +145,7 @@ function * next (tag) {
 function print (task) {
   if (Array.isArray(task)) { return task.map(print); }
   console.log();
-  var str = ['#'+task._id.toString().blue, task.name.black].join(' ');
+  var str = ['#'+task.uid.toString().blue, task.name.black].join(' ');
   console.log(str);
   task.description && console.log(task.description);
   task.tags && console.log('tags: ', task.tags.reduce(function(m, tag) {
@@ -155,14 +161,20 @@ function print (task) {
   console.log();
 }
 
+// split tags by commas
 function sliceTags (tags) {
   return tags.split(',').map(function (tag) {
     return tag.trim(); 
   });
 }
 
-function trimHash(str) {
-  return str.replace(/^#/, '');
+// remove leading hash and trailing commas
+function trim(str) {
+  return str
+    .trim()
+    .replace(/^#/, '')
+    .replace(/,$/, '')
+  ;
 }
 
 // parse human friendly data and update task object
