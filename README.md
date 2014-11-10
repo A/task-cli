@@ -83,6 +83,11 @@ Find tasks by text
 ❯ tasks find github
 ```
 
+## Licence
+
+MIT
+
+
 
 [1]: https://github.com/taskninja/task-model
 [2]: http://matthewmueller.github.io/date/
