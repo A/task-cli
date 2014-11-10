@@ -19,6 +19,7 @@ var tasks         = new Tasks();
 program
   .version(pkg.version)
   .option('-v, --verbose', 'verbose logs')
+  .option('-c, --count', 'show only count instead detailed tasks')
 ;
 
 program
@@ -36,7 +37,6 @@ program
 program
   .command('get [id|tag]')
   .description('get tasks by id or tag')
-  .option('-c, --count', 'show only count')
   .action(co(get))
 ;
 
@@ -151,7 +151,11 @@ function * next (tag) {
 
 // print task
 function print (task) {
-  if (Array.isArray(task)) { return task.map(print); }
+  if (Array.isArray(task)) {
+    return program.count
+      ? console.log('count: ' + task.length.toString().black)
+      : task.map(print);
+  }
   console.log();
   var str = ['#'+task.uid.toString().blue, task.name.black].join(' ');
   console.log(str);
