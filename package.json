@@ -1,7 +1,7 @@
 {
   "name": "task-cli",
   "version": "1.0.0",
-  "description": "CLI for https://github.com/shuvalov-anton/tasks",
+  "description": "CLI for task-model",
   "main": "index.js",
   "bin": {
     "tasks": "./bin/tasks"
@@ -28,6 +28,7 @@
     "moment": "^2.8.3",
     "moment-twitter": "^0.2.0",
     "npm": "^2.1.7",
-    "should": "^4.2.1"
+    "should": "^4.2.1",
+    "task-model": "^1.1.0"
   }
 }
