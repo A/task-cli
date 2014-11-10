@@ -47,6 +47,11 @@ program
 ;
 
 program
+  .command('find <text>')
+  .description('find tasks by text query')
+  .action(co(find))
+;
+program
   .command('done <id...>')
   .description('mark task as finished')
   .action(co(done))
@@ -129,8 +134,11 @@ function * done (ids) {
 }
 
 // find task by keywords
-function find () {
-  console.log('find');
+function * find (text) {
+  // wait for index
+  yield tasks.model.once.bind(tasks.model, 'index');
+  var results = yield tasks.find(text);
+  print(results);
   process.exit(0);
 }
 
@@ -164,7 +172,7 @@ function print (task) {
 // split tags by commas
 function sliceTags (tags) {
   return tags.split(',').map(function (tag) {
-    return tag.trim(); 
+    return tag.trim();
   });
 }
 
