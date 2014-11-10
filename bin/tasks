@@ -135,8 +135,6 @@ function * done (ids) {
 
 // find task by keywords
 function * find (text) {
-  // wait for index
-  yield tasks.model.once.bind(tasks.model, 'index');
   var results = yield tasks.find(text);
   print(results);
   process.exit(0);
