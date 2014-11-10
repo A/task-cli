@@ -1,13 +1,19 @@
 tasks-cli
 =========
 
-Simple CLI task manager based on [taskninja/task-model][1]. 
+Simple CLI task manager based on [taskninja/task-model][1].
+
+## Install
+
+```sh
+npm install -g task-cli
+```
 
 ![screenshot](https://cloud.githubusercontent.com/assets/1410106/4970081/312c2714-6878-11e4-95a3-c6f3ab5e0eca.png)
 
 ## Features
 
-- Show next actionable tasks with `tasks next` command 
+- Show next actionable tasks with `tasks next` command
 - Minimal and expressive options: `name`, `description`, `tags`, `estimate`, `start` and `due`.
 - Easy syntax: `tasks add name: new task`
 - Full Metal JavaScript: MongoDB and NodeJS with ES6 Generators under the hood.
@@ -17,7 +23,7 @@ Simple CLI task manager based on [taskninja/task-model][1].
 
 #### Global Flags
 
-- `-v, --verbosed`  
+- `-v, --verbosed`
   Show you verbosed logs for some operations.
 - `-c, --count`
   Show count of the tasks instead task descriptions.
