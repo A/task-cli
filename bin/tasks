@@ -10,7 +10,7 @@ var moment        = require('moment-twitter');
 var parse         = require('../lib/parser');
 var pkg           = require('../package');
 var program       = require('commander');
-var Tasks         = require('tasks-model');
+var Tasks         = require('task-model');
 var tasks         = new Tasks();
 
 
